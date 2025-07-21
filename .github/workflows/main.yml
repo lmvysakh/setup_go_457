@@ -1,0 +1,25 @@
+name: Go toolchain version handling
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  setup-go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go from go.mod
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod  # Only reads 'go' directive (1.21), ignores 'toolchain'
+          
+
+      - name: go version
+        run: go version
+
+      - name: Run app
+        run: go run ./main.go
