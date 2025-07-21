@@ -26,3 +26,8 @@ jobs:
 
       - name: Run app
         run: go run ./main.go
+
+      - name: Clean Go module cache
+        if: always()
+        run: |
+          go clean -modcache || true
