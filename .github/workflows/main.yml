@@ -10,8 +10,8 @@ on:
 jobs:
   setup-go:
     runs-on: ubuntu-latest
-    # env:
-    #   GOTOOLCHAIN: local  # <--- Add this line to set GOTOOLCHAIN=local for all steps
+    env:
+      GOTOOLCHAIN: local  # <--- Add this line to set GOTOOLCHAIN=local for all steps
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go from go.mod
