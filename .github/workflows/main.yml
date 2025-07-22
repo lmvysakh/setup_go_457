@@ -10,15 +10,15 @@ on:
 jobs:
   setup-go:
     runs-on: ubuntu-latest
-    env:
-      GOTOOLCHAIN: local  # <--- Add this line to set GOTOOLCHAIN=local for all steps
+    # env:
+    #   GOTOOLCHAIN: local  
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go from go.mod
-        uses: actions/setup-go@v5
+      - name: Set up Go
+        uses: matthewhughes934/setup-go@improve-toolchain-handling
         with:
           go-version: '1.21.8'
-          go-version-file: go.mod  # Only reads 'go' directive (1.21), ignores 'toolchain'/
+          # go-version-file: go.mod  
           
 
       - name: go version
