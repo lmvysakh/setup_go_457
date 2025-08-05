@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
-        # uses: matthewhughes934/setup-go@improve-toolchain-handling
-        uses: actions/setup-go@v5
+        uses: matthewhughes934/setup-go@improve-toolchain-handling
+        # uses: actions/setup-go@v5
         with:
           # go-version: '1.21.8'
           go-version-file: go.mod  
