@@ -15,13 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
-        # uses: matthewhughes934/setup-go@improve-toolchain-handling
-        uses: lmvysakh/setup-go@check_460pr_sol
+        uses: matthewhughes934/setup-go@improve-toolchain-handling
+        # uses: lmvysakh/setup-go@check_460pr_sol
         # uses: actions/setup-go@v5
         with:
-          go-version: '1.21.8'
+          # go-version: '1.21.8'
           go-version-file: go.mod  
-          go-version-directive: go
+          # go-version-directive: go
            
 
       - name: go version
