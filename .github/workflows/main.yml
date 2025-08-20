@@ -22,7 +22,7 @@ jobs:
         with:
           # go-version: '1.21.8'
           go-version-file: go.mod  
-          # go-version-directive: toolchain
+          go-version-directive: toolchain
            
 
       - name: go version
