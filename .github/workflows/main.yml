@@ -17,8 +17,8 @@ jobs:
       - name: Set up Go
         # uses: matthewhughes934/setup-go@improve-toolchain-handling
         # uses: lmvysakh/setup-go@check_460pr_sol
-        # uses: lmvysakh/setup-go@check_460pr_sol_#2
-        uses: actions/setup-go@v5
+        uses: lmvysakh/setup-go@check_460pr_sol_#2
+        # uses: actions/setup-go@v5
         with:
           # go-version: '1.21.8'
           go-version-file: go.mod  
