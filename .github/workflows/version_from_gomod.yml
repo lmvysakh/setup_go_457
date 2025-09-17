@@ -20,5 +20,5 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - run: go version
-      - run: go run main.go
+      - run: go run ./main.go
         continue-on-error: true

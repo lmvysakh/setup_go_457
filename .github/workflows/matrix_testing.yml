@@ -23,5 +23,5 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - run: go version
-      - run: go run main.go
+      - run: go run ./main.go
         continue-on-error: true

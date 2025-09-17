@@ -20,7 +20,7 @@ jobs:
         with:
           go-version: 'stable'
       - run: go version
-      - run: go run hello.go
+      - run: go run ./main.go
         continue-on-error: true
 
   oldstable:
@@ -35,5 +35,5 @@ jobs:
         with:
           go-version: 'oldstable'
       - run: go version
-      - run: go run main.go
+      - run: go run ./main.go
         continue-on-error: true
