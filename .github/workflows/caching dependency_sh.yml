@@ -1,0 +1,25 @@
+name: Monorepo Cache Test - Self hosted
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cache-test:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v5
+       # - uses: actions/setup-go@v6
+      - uses: antontroshin/setup-go@windows-go-mod-cache
+        with:
+          go-version: '1.17'
+          check-latest: true
+          cache-dependency-path: |
+            subdir/go.sum
+            tools/go.sum
+      - run: go version
+      - run: go run main.go
+        continue-on-error: true

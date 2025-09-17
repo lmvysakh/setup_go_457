@@ -1,0 +1,26 @@
+name: Matrix Testing - Self hosted
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        go: [ '1.14', '1.13' ]
+    name: Go ${{ matrix.go }} sample
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup go
+         # - uses: actions/setup-go@v6
+        uses: antontroshin/setup-go@windows-go-mod-cache
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go version
+      - run: go run main.go
+        continue-on-error: true

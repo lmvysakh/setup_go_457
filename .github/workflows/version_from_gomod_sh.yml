@@ -1,0 +1,21 @@
+name: Go Version File Test - Self hosted
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  mod-version:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v5
+     # - uses: actions/setup-go@v6
+      - uses: antontroshin/setup-go@windows-go-mod-cache
+        with:
+          go-version-file: 'go.mod'
+      - run: go version
+      - run: go run main.go
+        continue-on-error: true

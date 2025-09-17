@@ -1,0 +1,39 @@
+name: Stable and Oldstable Aliases
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  stable:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      # - uses: actions/setup-go@v6
+      - uses: antontroshin/setup-go@windows-go-mod-cache
+        with:
+          go-version: 'stable'
+      - run: go version
+      - run: go run hello.go
+        continue-on-error: true
+
+  oldstable:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      # - uses: actions/setup-go@v6
+      - uses: antontroshin/setup-go@windows-go-mod-cache
+        with:
+          go-version: 'oldstable'
+      - run: go version
+      - run: go run main.go
+        continue-on-error: true
