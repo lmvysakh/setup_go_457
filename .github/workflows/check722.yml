@@ -1,0 +1,24 @@
+name: Reproduce error 722
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          # cache: true (default)
+
+      # Any second call to setup-go with cache enabled triggers the issue
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
