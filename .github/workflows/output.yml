@@ -1,0 +1,23 @@
+name: Go Version Output
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  mod-version:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+     # - uses: actions/setup-go@v6
+      - uses: lmvysakh/setup-go@722fix
+        id: go124
+        with:
+          go-version: '^1.24'
+      - run: echo "Installed Go version: ${{ steps.go124.outputs.go-version }}"
