@@ -17,10 +17,7 @@ jobs:
       - uses: maxcleme/setup-go@fix/multiple-invocations-caching
         with:
           go-version-file: go.mod
-          # cache: true (default)
 
-      # Fix go.sum in the runner so the module cache gets properly populated
-      # This is needed because the go.sum in the repo is incomplete
       - name: Sync dependencies and download modules
         run: |
           go mod tidy
