@@ -1,0 +1,34 @@
+name: Reproduce error 722 - PR branch
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1st setup-go call: restores cache (miss on 1st run, hit on 2nd run)
+      - uses: maxcleme/setup-go@fix/multiple-invocations-caching
+        with:
+          go-version-file: go.mod
+          # cache: true (default)
+
+      # Fix go.sum in the runner so the module cache gets properly populated
+      # This is needed because the go.sum in the repo is incomplete
+      - name: Sync dependencies and download modules
+        run: |
+          go mod tidy
+          go mod download
+
+      # 2nd setup-go call: triggers the issue
+      # - 1st workflow run: cache miss → seeds the cache
+      # - 2nd workflow run: cache HIT → tar "Cannot open: File exists" ← THIS IS #722
+      - uses: maxcleme/setup-go@fix/multiple-invocations-caching
+        with:
+          go-version-file: go.mod
