@@ -1,0 +1,47 @@
+name: Clear cache and test 722 fix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clear GitHub Actions cache
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "=== Current caches ==="
+          gh cache list --repo ${{ github.repository }}
+
+          echo ""
+          echo "=== Deleting all setup-go caches ==="
+          gh cache list --repo ${{ github.repository }} --json id,key \
+            --jq '.[] | select(.key | startswith("setup-go-")) | .key' | \
+          while read -r key; do
+            echo "Deleting: $key"
+            gh cache delete "$key" --repo ${{ github.repository }} || true
+          done
+
+          echo ""
+          echo "=== Remaining caches ==="
+          gh cache list --repo ${{ github.repository }}
+
+      # 1st setup-go call
+      - uses: lmvysakh/setup-go@722fix
+        with:
+          go-version-file: go.mod
+
+      - name: Sync dependencies and download modules
+        run: |
+          go mod tidy
+          go mod download
+
+      # 2nd setup-go call — this is where #722 would trigger
+      - uses: lmvysakh/setup-go@722fix
+        with:
+          go-version-file: go.mod
