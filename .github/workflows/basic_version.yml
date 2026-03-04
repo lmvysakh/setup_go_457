@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       # - uses: actions/setup-go@v6
-      - uses: antontroshin/setup-go@windows-go-mod-cache
+      - uses: lmvysakh/setup-go@722fix
         with:
           go-version: '1.23'
       - run: go version

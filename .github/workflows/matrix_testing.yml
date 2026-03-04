@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Setup go
          # - uses: actions/setup-go@v6
-        uses: antontroshin/setup-go@windows-go-mod-cache
+        uses: lmvysakh/setup-go@722fix
         with:
           go-version: ${{ matrix.go }}
       - run: go version
