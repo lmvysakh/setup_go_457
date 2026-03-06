@@ -14,7 +14,8 @@ jobs:
       - uses: actions/checkout@v4
 
       # 1st setup-go call: restores cache (miss on 1st run, hit on 2nd run)
-      - uses: lmvysakh/setup-go@722fix
+      # - uses: lmvysakh/setup-go@722fix
+      - uses: lmvysakh/setup-go@fileexists_resolution
         with:
           go-version-file: go.mod
 
@@ -26,6 +27,7 @@ jobs:
       # 2nd setup-go call: triggers the issue
       # - 1st workflow run: cache miss → seeds the cache
       # - 2nd workflow run: cache HIT → tar "Cannot open: File exists" ← THIS IS #722
-      - uses: lmvysakh/setup-go@722fix
+      # - uses: lmvysakh/setup-go@722fix
+      - uses: lmvysakh/setup-go@fileexists_resolution
         with:
           go-version-file: go.mod
