@@ -1,0 +1,115 @@
+name: "Demo: setup-go issue #481"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # JOB 1: Shows the problem — go.mod says "go 1.22.0" → installs exactly 1.22.0
+  exact-version-from-gomod:
+    name: "go.mod with 'go 1.22.0' (exact match)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create go.mod with exact patch version
+        run: |
+          mkdir -p /tmp/demo && cd /tmp/demo
+          cat > go.mod << 'EOF'
+          module example.com/demo
+          go 1.22.0
+          EOF
+          cat go.mod
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: '/tmp/demo/go.mod'
+      - name: Show installed version
+        run: |
+          echo "=== Installed Go Version ==="
+          go version
+          echo ""
+          echo " Notice: This installs EXACTLY 1.22.0, even if 1.22.7+ is available."
+          echo "   This is the behavior reported in issue #481."
+
+  # JOB 2: Shows the contrast — go.mod says "go 1.22" (no patch) → installs latest 1.22.x
+  latest-patch-from-gomod:
+    name: "go.mod with 'go 1.22' (latest patch)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create go.mod without patch version
+        run: |
+          mkdir -p /tmp/demo && cd /tmp/demo
+          cat > go.mod << 'EOF'
+          module example.com/demo
+          go 1.22
+          EOF
+          cat go.mod
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: '/tmp/demo/go.mod'
+      - name: Show installed version
+        run: |
+          echo "=== Installed Go Version ==="
+          go version
+          echo ""
+          echo " Notice: This installs the LATEST 1.22.x patch version."
+
+  # JOB 3: Workaround — override with go-version input using semver range
+  workaround-semver-range:
+    name: " Workaround: go-version with semver range"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '~1.22.0'   # Matches >=1.22.0, <1.23.0
+      - name: Show installed version
+        run: |
+          echo "=== Installed Go Version ==="
+          go version
+          echo ""
+          echo " Workaround: Using '~1.22.0' semver range ignores go.mod but"
+          echo "   installs the latest 1.22.x patch."
+
+  # JOB 4: Workaround — use toolchain directive
+  workaround-toolchain-directive:
+    name: " Workaround: toolchain directive in go.mod"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create go.mod with toolchain directive
+        run: |
+          mkdir -p /tmp/demo && cd /tmp/demo
+          cat > go.mod << 'EOF'
+          module example.com/demo
+          go 1.22.0
+          toolchain go1.22.7
+          EOF
+          cat go.mod
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: '/tmp/demo/go.mod'
+      - name: Show installed version
+        run: |
+          echo "=== Installed Go Version ==="
+          go version
+          echo ""
+          echo " Workaround: The 'toolchain' directive overrides the 'go' directive."
+          echo "   setup-go prefers toolchain when present."
+
+  # JOB 5: check-latest with explicit version
+  workaround-check-latest:
+    name: " Workaround: check-latest with explicit go-version"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          check-latest: true
+      - name: Show installed version
+        run: |
+          echo "=== Installed Go Version ==="
+          go version
+          echo ""
+          echo " Workaround: Using 'go-version: 1.22' + 'check-latest: true'"
+          echo "   ensures the latest 1.22.x patch is installed."
