@@ -1,0 +1,61 @@
+name: Cache testing for 722 using actions/caches
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Step 1: Install Go (no built-in cache) ──
+      - uses: actions/setup-go@v6
+        id: setup-go
+        with:
+          go-version-file: go.mod
+          cache: false                        # Disable built-in cache
+
+      # ── Step 2: Capture cache paths from `go env` ──
+      - name: Determine Go cache paths
+        id: go-env
+        run: |
+          echo "mod-cache=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
+          echo "build-cache=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
+
+      # ── Step 3: Restore cache (ONE restore, never duplicated) ──
+      - uses: actions/cache/restore@v5
+        id: go-cache
+        with:
+          path: |
+            ${{ steps.go-env.outputs.mod-cache }}
+            ${{ steps.go-env.outputs.build-cache }}
+          key: go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
+          restore-keys: |
+            go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-
+
+      # ── Step 4: Download modules only on cache miss ──
+      - name: Download Go modules
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        run: go mod download
+
+      # ── Any second setup-go call is safe (cache: false) ──
+      # e.g., from a composite action or an explicit second call
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false                        # No second tar extraction
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      # ── Step 5: Save cache only when key is new ──
+      - uses: actions/cache/save@v5
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.go-env.outputs.mod-cache }}
+            ${{ steps.go-env.outputs.build-cache }}
+          key: go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
