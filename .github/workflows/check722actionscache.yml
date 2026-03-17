@@ -1,5 +1,5 @@
 name: Cache testing for 722 using actions/cache/restore
-s
+
 on:
   workflow_dispatch:
   push:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v6s
+      - uses: actions/setup-go@v6
         id: setup-go
         with:
           go-version-file: go.mod
