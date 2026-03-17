@@ -1,6 +1,11 @@
 name: Cache testing for 722 using actions/cache
 
-on: push
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+
 
 jobs:
   build:
@@ -45,11 +50,6 @@ jobs:
           go-version-file: go.mod
           cache: false                        # No second tar extraction
 
-      # - name: Build
-      #   run: go build ./...
-
-      # - name: Test
-      #   run: go test ./...
 
       # ── Step 5: Save cache only when key is new ──
       - uses: actions/cache/save@v5
