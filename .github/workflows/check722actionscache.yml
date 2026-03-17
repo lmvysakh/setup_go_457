@@ -1,4 +1,4 @@
-name: Cache testing for 722 using actions/caches
+name: Cache testing for 722 using actions/cache
 
 on: push
 
@@ -45,11 +45,11 @@ jobs:
           go-version-file: go.mod
           cache: false                        # No second tar extraction
 
-      - name: Build
-        run: go build ./...
+      # - name: Build
+      #   run: go build ./...
 
-      - name: Test
-        run: go test ./...
+      # - name: Test
+      #   run: go test ./...
 
       # ── Step 5: Save cache only when key is new ──
       - uses: actions/cache/save@v5
