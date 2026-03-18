@@ -21,6 +21,8 @@ jobs:
           go-version-file: go.mod
           cache: true
 
+      - run: go mod download
+
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
