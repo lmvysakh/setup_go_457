@@ -23,6 +23,9 @@ jobs:
       #   if: steps.go-cache.outputs.cache-hit != 'true'
       #   run: go mod download
 
+      - name: Download modules
+        run: go mod download
+
       - name: Setup go
         id: setup-go
         uses: actions/setup-go@v6
@@ -66,5 +69,5 @@ jobs:
           key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.CACHE_OS_SUFFIX }}go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
       - name: Download modules
         run: go mod download
-      - name: Build
-        run: go build ./...
+      # - name: Build
+      #   run: go build ./...
