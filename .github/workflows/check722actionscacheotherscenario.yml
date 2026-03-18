@@ -1,0 +1,55 @@
+name: Inbuild cahe true for first invocation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v6
+        id: setup-go
+        with:
+          go-version-file: go.mod
+          cache: true           
+
+      - name: Determine Go cache paths
+        id: go-env
+        run: |
+          echo "mod-cache=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
+          echo "build-cache=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache/restore@v5
+        id: go-cache
+        with:
+          path: |
+            ${{ steps.go-env.outputs.mod-cache }}
+            ${{ steps.go-env.outputs.build-cache }}
+          key: go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
+          restore-keys: |
+            go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-
+
+    
+      - name: Download Go modules
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        run: go mod download
+
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false                        
+
+      - uses: actions/cache/save@v5
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.go-env.outputs.mod-cache }}
+            ${{ steps.go-env.outputs.build-cache }}
+          key: go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
