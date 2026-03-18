@@ -25,6 +25,17 @@ jobs:
           echo "mod-cache=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
           echo "build-cache=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
 
+   
+      - name: Download Go modules
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        run: go mod download
+
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false                        
+
       - uses: actions/cache/restore@v5
         id: go-cache
         with:
@@ -35,16 +46,6 @@ jobs:
           restore-keys: |
             go-${{ runner.os }}-${{ steps.setup-go.outputs.go-version }}-
 
-    
-      - name: Download Go modules
-        if: steps.go-cache.outputs.cache-hit != 'true'
-        run: go mod download
-
-
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: false                        
 
       - uses: actions/cache/save@v5
         if: steps.go-cache.outputs.cache-hit != 'true'
