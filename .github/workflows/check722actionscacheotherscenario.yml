@@ -14,14 +14,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v6
-        id: setup-go
+        id: setup-go-1
         with:
           go-version-file: go.mod
           cache: true        
    
-      - name: Download Go modules
-        if: steps.go-cache.outputs.cache-hit != 'true'
-        run: go mod download
+      # - name: Download Go modules
+      #   if: steps.go-cache.outputs.cache-hit != 'true'
+      #   run: go mod download
 
       - name: Setup go
         id: setup-go
