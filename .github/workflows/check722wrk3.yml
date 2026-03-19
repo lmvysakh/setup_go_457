@@ -27,10 +27,10 @@ jobs:
       - name: Clean stale Go cache directories(Windows)
         if: runner.os == 'Windows'
         run: |
-          icacls "%USERPROFILE%\go\pkg\mod" /grant %USERNAME%:F /T || true
-          rmdir /S /Q "%USERPROFILE%\go\pkg\mod"
-          icacls "%LOCALAPPDATA%\go-build" /grant %USERNAME%:F /T || true
-          rmdir /S /Q "%LOCALAPPDATA%\go-build"
+           chmod -R u+w ~/go/pkg/mod 2>/dev/null || true
+           rm -rf ~/go/pkg/mod
+           chmod -R u+w ~/.cache/go-build 2>/dev/null || true
+           rm -rf ~/.cache/go-build
         shell: powershell
 
       - uses: actions/setup-go@v6
