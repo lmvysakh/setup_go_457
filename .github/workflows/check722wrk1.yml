@@ -20,8 +20,14 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Mark cache as restored
+      - name: Mark cache as restored (Linux/macOS)
+        if: runner.os != 'Windows'
         run: echo "GO_CACHE_RESTORED=true" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Mark cache as restored (Windows)
+        if: runner.os == 'Windows'
+        run: echo "GO_CACHE_RESTORED=true" >> $env:GITHUB_ENV
         shell: powershell
 
       - run: go mod download
