@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v6
 
       # Remove read-only Go cache files left from previous runs
-      - name: Clean stale Go cache directories(Linux/macOS)
+      - name: Clean Go cache directories(Linux/macOS)
         if: runner.os != 'Windows'
         run: |
           chmod -R u+w ~/go/pkg/mod 2>/dev/null || true
@@ -24,13 +24,19 @@ jobs:
           rm -rf ~/.cache/go-build
         shell: bash
 
-      - name: Clean stale Go cache directories(Windows)
+      - name: Clean Go cache directories(Windows)
         if: runner.os == 'Windows'
         run: |
-           chmod -R u+w ~/go/pkg/mod 2>/dev/null || true
-           rm -rf ~/go/pkg/mod
-           chmod -R u+w ~/.cache/go-build 2>/dev/null || true
-           rm -rf ~/.cache/go-build
+          $modPath = Join-Path $env:USERPROFILE "go\pkg\mod"
+          $buildPath = Join-Path $env:LOCALAPPDATA "go-build"
+          if (Test-Path $modPath) {
+            icacls $modPath /grant "${env:USERNAME}:(OI)(CI)F" /T /Q 2>$null
+            Remove-Item -Recurse -Force $modPath
+          }
+          if (Test-Path $buildPath) {
+            icacls $buildPath /grant "${env:USERNAME}:(OI)(CI)F" /T /Q 2>$null
+            Remove-Item -Recurse -Force $buildPath
+          }
         shell: powershell
 
       - uses: actions/setup-go@v6
