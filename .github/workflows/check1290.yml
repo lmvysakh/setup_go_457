@@ -2,6 +2,8 @@ name: "Reproduce #1290 — Spaces in tool cache path"
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   reproduce:
