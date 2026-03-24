@@ -1,0 +1,36 @@
+name: "Reproduce #1290 — Spaces in tool cache path"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reproduce:
+    runs-on: self-hosted
+
+    steps:
+      - name: Clear cached Python to force fresh install
+        shell: powershell
+        run: |
+          $root = if ($env:AGENT_TOOLSDIRECTORY) { $env:AGENT_TOOLSDIRECTORY } else { $env:RUNNER_TOOL_CACHE }
+          $pythonDir = Join-Path $root "Python"
+          if (Test-Path $pythonDir) {
+            Remove-Item $pythonDir -Recurse -Force
+            Write-Host "Cleared $pythonDir"
+          }
+
+      - name: Show environment
+        shell: powershell
+        run: |
+          Write-Host "AGENT_TOOLSDIRECTORY : $env:AGENT_TOOLSDIRECTORY"
+          Write-Host "RUNNER_TOOL_CACHE    : $env:RUNNER_TOOL_CACHE"
+
+      - name: Setup Python (reproduces the error)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify
+        shell: powershell
+        run: |
+          python --version
+          python -m pip --version
