@@ -22,6 +22,15 @@ jobs:
           go mod tidy
           go mod download
 
+      - name: Fix read-only permissions on cached Go directories
+        run: |
+          chmod -R 0755 \
+            ~/go/pkg/mod \
+            ~/.cache/go-build \
+            ~/.cache/golangci-lint \
+            ~/.cache/buf/ \
+            2>/dev/null || true
+
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
